@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace SER.Models.Audit
+namespace SER.Models.SERAudit
 {
     public class ClientBrowser
     {

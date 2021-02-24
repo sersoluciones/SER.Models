@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
-namespace SER.Models.Audit
+namespace SER.Models.SERAudit
 {
     public class ClientOS
     {

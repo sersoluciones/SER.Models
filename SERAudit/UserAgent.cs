@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SER.Models.Audit
+namespace SER.Models.SERAudit
 {
     public class UserAgent
     {

@@ -15,7 +15,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace SER.Models.Audit
+namespace SER.Models.SERAudit
 {
     public class AuditManager
     {
