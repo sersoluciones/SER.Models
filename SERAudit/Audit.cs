@@ -24,13 +24,13 @@ namespace SER.Models.SERAudit
 
         public AudiState action { get; set; }
 
-        [StringLength(20)]
+        [StringLength(40)]
         public string objeto { get; set; }
 
-        [StringLength(20)]
+        [StringLength(200)]
         public string username { get; set; }
 
-        [StringLength(20)]
+        [StringLength(100)]
         public string role { get; set; }
 
         [StringLength(2000)]
@@ -42,7 +42,7 @@ namespace SER.Models.SERAudit
         [Column(TypeName = "jsonb")]
         public string data { get; set; }
 
-        [StringLength(60)]
+        [StringLength(80)]
         public string user_id { get; set; }
     }
 
