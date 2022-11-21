@@ -21,16 +21,13 @@ namespace SER.Models.SERAudit
     {
         private readonly ILogger _logger;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IMemoryCache _cache;
 
         public AuditManager(
             ILogger<AuditManager> logger,
-            IHttpContextAccessor contextAccessor,
-            IMemoryCache memoryCache)
+            IHttpContextAccessor contextAccessor)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
-            _cache = memoryCache;
         }
 
         public async Task<string> AddLog(DbContext context, AuditBinding entity, string id = "", bool commit = false)
@@ -102,8 +99,8 @@ namespace SER.Models.SERAudit
                 objeto = entity.objeto,
                 username = userName,
                 role = string.Join(",", GetRolesUser().ToArray()),
-                json_browser = InfoBrowser(),
-                json_request = GetInfoRequest(),
+                json_browser = InfoBrowser(_contextAccessor),
+                json_request = GetInfoRequest(_contextAccessor),
                 data = data,
                 user_id = userId
             };
@@ -193,31 +190,29 @@ namespace SER.Models.SERAudit
         }
 
 
-        public string InfoBrowser()
+        public static string InfoBrowser(IHttpContextAccessor httpContextAccessor)
         {
-            UserAgent ua = new UserAgent();
             try
             {
-                string userAgent = _contextAccessor.HttpContext.Request.Headers["User-Agent"];
-                _logger.LogInformation(3, $"userAgent: {userAgent}");
-                ua = new UserAgent(_contextAccessor.HttpContext.Request.Headers["User-Agent"]);
+                string userAgent = httpContextAccessor.HttpContext.Request.Headers["User-Agent"];
+                UserAgent ua = new(userAgent);
+                return JsonSerializer.Serialize(ua);
             }
             catch (Exception) { }
-            //string.Join(",", dogs.ToArray());
-            return JsonSerializer.Serialize(ua);
+            return "";
         }
 
-        public string GetInfoRequest()
+        public static string GetInfoRequest(IHttpContextAccessor httpContextAccessor)
         {
-            string refer = _contextAccessor.HttpContext.Request.Headers["Referer"];
+            string refer = httpContextAccessor.HttpContext.Request.Headers["Referer"];
             var infoRequest = new InfoRequest
             {
-                verb = string.Format("{0}", _contextAccessor.HttpContext.Request.Method),
-                content_type = string.Format("{0}", _contextAccessor.HttpContext.Request.ContentType),
-                encoded_url = string.Format("{0}", _contextAccessor.HttpContext.Request.GetEncodedUrl()),
-                path = string.Format("{0}", _contextAccessor.HttpContext.Request.Path),
-                remote_ip_address = string.Format("{0}", _contextAccessor.HttpContext.Connection.RemoteIpAddress),
-                host = string.Format("{0}", _contextAccessor.HttpContext.Request.Host),
+                verb = string.Format("{0}", httpContextAccessor.HttpContext.Request.Method),
+                content_type = string.Format("{0}", httpContextAccessor.HttpContext.Request.ContentType),
+                encoded_url = string.Format("{0}", httpContextAccessor.HttpContext.Request.GetEncodedUrl()),
+                path = string.Format("{0}", httpContextAccessor.HttpContext.Request.Path),
+                remote_ip_address = string.Format("{0}", httpContextAccessor.HttpContext.Connection.RemoteIpAddress),
+                host = string.Format("{0}", httpContextAccessor.HttpContext.Request.Host),
                 refferer_url = string.Format("{0}", (string.IsNullOrEmpty(refer)) ? "" : refer)
             };
             return JsonSerializer.Serialize<InfoRequest>(infoRequest);
